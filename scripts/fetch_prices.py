@@ -166,23 +166,25 @@ def parse_pos_text(text: str) -> tuple[dt.date, list[dict]]:
 
 CROP_YEAR_RE = re.compile(r"令和\s*(\d+)\s*年産米の相対取引価格")
 MONTH_RE = re.compile(r"(\d{1,2})月")
+MAX_AITAI_CANDIDATES = 15
 VALUE_RE = r"(?:\d{1,3}(?:,\d{3})+|\d+|-|－)"
 
 
 def find_aitai_pdf_urls(html: str) -> list[str]:
-    """一覧ページの「最新の公表資料」にある PDF のリンクを上から順に返す。
+    """一覧ページにある相対取引価格関連の PDF のリンクを、ページ上の順に返す。
 
-    ファイル名の番号は毎月変わるので、中身を見て銘柄別の価格表を探す。
+    ファイル名の番号は毎月変わり、見出しの位置もページの構成で変わりうるので、
+    候補を広めに集めて中身で銘柄別の価格表を探す。
     """
-    start = html.find("相対取引価格・数量")
-    if start < 0:
-        raise ParseError("一覧ページに「相対取引価格・数量」が見つかりません")
-    end = html.find("契約・販売状況", start)
-    section = html[start:end if end > 0 else None]
-    urls = re.findall(r'href="([^"]+\.pdf)"', section)
+    urls = []
+    for u in re.findall(r"""href=["']([^"']*aitaikakaku[^"']*\.pdf)["']""", html, re.I):
+        full = urllib.parse.urljoin(AITAI_PAGE_URL, u)
+        if full not in urls:
+            urls.append(full)
     if not urls:
-        raise ParseError("相対取引価格の PDF へのリンクが見つかりません")
-    return [urllib.parse.urljoin(AITAI_PAGE_URL, u) for u in urls]
+        n = len(re.findall(r"\.pdf", html, re.I))
+        raise ParseError(f"相対取引価格の PDF へのリンクが見つかりません（ページ内の PDF 参照 {n} 件）")
+    return urls
 
 
 def parse_value(v: str) -> int | None:
@@ -245,12 +247,19 @@ def parse_aitai_text(text: str) -> dict:
     }
 
 
-def fetch_aitai_text() -> str:
+def fetch_aitai() -> dict:
+    """一覧ページの上から順に PDF を開き、銘柄別の価格表として読めた最初のものを返す。"""
     html = http_get(AITAI_PAGE_URL).decode("utf-8", "replace")
-    for url in find_aitai_pdf_urls(html):
+    for url in find_aitai_pdf_urls(html)[:MAX_AITAI_CANDIDATES]:
         text = pdf_to_text(http_get(url))
-        if "全銘柄平均価格" in text and CROP_YEAR_RE.search(text.translate(ZEN)) and "品種銘柄" in text:
-            return text
+        if "品種銘柄" not in text or "全銘柄平均価格" not in text:
+            continue
+        try:
+            crop = parse_aitai_text(text)
+        except ParseError:
+            continue
+        print(f"相対取引価格の表: {url}")
+        return crop
     raise ParseError("銘柄別の相対取引価格の PDF が見つかりません")
 
 
@@ -288,8 +297,10 @@ def main() -> int:
     }
 
     try:
-        aitai_text = pdf_to_text(Path(args.aitai_pdf).read_bytes()) if args.aitai_pdf else fetch_aitai_text()
-        crop = parse_aitai_text(aitai_text)
+        if args.aitai_pdf:
+            crop = parse_aitai_text(pdf_to_text(Path(args.aitai_pdf).read_bytes()))
+        else:
+            crop = fetch_aitai()
         old = data.get("wholesale_monthly", {})
         data["wholesale_monthly"] = {
             "unit": "円/玄米60kg（税込）",
