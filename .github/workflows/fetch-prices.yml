@@ -1,0 +1,31 @@
+name: お米の価格データを更新
+
+on:
+  schedule:
+    # 毎週金曜 18:00 JST（農水省の週次公表後）
+    - cron: "0 9 * * 5"
+    # 月次の相対取引価格の取りこぼし対策として毎月20日にも実行
+    - cron: "0 9 20 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: python3 scripts/fetch_prices.py
+      - name: 変更があればコミット
+        run: |
+          if git diff --quiet data/; then
+            echo "変更なし"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/prices.json
+          git commit -m "価格データを更新"
+          git push
