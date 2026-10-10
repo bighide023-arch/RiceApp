@@ -2,3 +2,7 @@ __pycache__/
 .DS_Store
 *.pdf
 *.csv
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
