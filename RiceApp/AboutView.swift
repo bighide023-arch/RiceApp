@@ -19,6 +19,11 @@ struct AboutView: View {
                         }
                     }
                 }
+                if let forecast = store.data?.forecast {
+                    Section("今後の見通し") {
+                        Text("店頭価格の過去の動きから、\(forecast.method.replacingOccurrences(of: "（過去の店頭価格のみ）", with: ""))で8週先までを計算した目安です。将来の値段を保証するものではありません。")
+                    }
+                }
                 Section {
                     Text("このアプリは農林水産省の公表データ（公共データ利用規約 第1.0版）を加工して作成しています。国が作成したものではありません。")
                     Text("表示内容の正確性は保証されません。最新の情報は出典元でご確認ください。")

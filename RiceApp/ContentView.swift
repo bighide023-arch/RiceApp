@@ -24,6 +24,9 @@ struct ContentView: View {
                         }
                         RetailSummaryCard(retail: data.retailWeekly)
                         RetailChartCard(weeks: data.retailWeekly.weeks)
+                        if let forecast = data.forecast {
+                            ForecastCard(forecast: forecast, weeks: data.retailWeekly.weeks)
+                        }
                         if let wholesale = data.wholesaleMonthly {
                             WholesaleCard(wholesale: wholesale)
                         }
@@ -177,6 +180,85 @@ struct RetailChartCard: View {
                 Text("単位：円/5kg（税込）").font(.caption).foregroundStyle(.secondary)
             }
         }
+    }
+}
+
+// MARK: - 見通し
+
+struct ForecastCard: View {
+    let forecast: Forecast
+    let weeks: [RetailWeek]
+
+    var body: some View {
+        let recent = Array(weeks.suffix(12))
+        Card {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("今後の見通し（参考）").font(.headline)
+                    Spacer()
+                    Text(forecast.directionLabel)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(directionColor)
+                }
+                if let target = forecast.weeks.dropFirst(3).first {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("4週後（\(target.startDate.monthDay)〜の週）")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            Text("約\(target.mid.formatted())円")
+                                .font(.title2.weight(.bold))
+                                .monospacedDigit()
+                            Text("（\(target.low.formatted())〜\(target.high.formatted())円）")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .monospacedDigit()
+                        }
+                    }
+                }
+
+                Chart {
+                    ForEach(recent) { w in
+                        LineMark(x: .value("週", w.startDate), y: .value("円", w.average))
+                            .foregroundStyle(by: .value("種類", "実際"))
+                    }
+                    ForEach(forecast.weeks) { w in
+                        AreaMark(
+                            x: .value("週", w.startDate),
+                            yStart: .value("下", w.low),
+                            yEnd: .value("上", w.high)
+                        )
+                        .foregroundStyle(Color.orange.opacity(0.15))
+                        LineMark(x: .value("週", w.startDate), y: .value("円", w.mid))
+                            .foregroundStyle(by: .value("種類", "予想"))
+                            .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 4]))
+                    }
+                }
+                .chartForegroundStyleScale(["実際": Color.accentColor, "予想": Color.orange])
+                .chartYScale(domain: .automatic(includesZero: false))
+                .frame(height: 180)
+
+                Text(note)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var directionColor: Color {
+        switch forecast.direction {
+        case "up": Color.red
+        case "down": Color.blue
+        default: Color.secondary
+        }
+    }
+
+    private var note: String {
+        var text = "過去の店頭価格の動きだけから計算した目安です。政策の変更や天候などのニュースは反映していません。色の帯は、およそ8割の確率で入ると見込む範囲です。"
+        if let b = forecast.backtest {
+            text += "過去に同じ方法で\(b.weeksAhead)週先を予想した場合、平均で約\(b.modelMae)円ずれました。"
+        }
+        return text
     }
 }
 
