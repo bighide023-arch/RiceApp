@@ -107,7 +107,7 @@ struct ChangeLabel: View {
     var body: some View {
         let diff = current - previous
         let percent = previous == 0 ? 0 : Double(diff) / Double(previous)
-        let sign = diff > 0 ? "+" : (diff < 0 ? "▲" : "±")
+        let sign = diff > 0 ? "+" : (diff < 0 ? "−" : "±")
         Text("\(suffix) \(sign)\(abs(diff).formatted())円（\(sign)\(abs(percent).formatted(.percent.precision(.fractionLength(1)))))")
             .font(.subheadline.weight(.medium))
             .foregroundStyle(diff > 0 ? Color.red : (diff < 0 ? Color.blue : Color.secondary))

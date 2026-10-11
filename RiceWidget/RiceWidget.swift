@@ -102,7 +102,7 @@ struct RiceWidgetView: View {
 
     private func change(current: Int, previous: Int) -> some View {
         let diff = current - previous
-        let sign = diff > 0 ? "+" : (diff < 0 ? "▲" : "±")
+        let sign = diff > 0 ? "+" : (diff < 0 ? "−" : "±")
         return Text("前週比 \(sign)\(abs(diff).formatted())円")
             .font(.caption.weight(.medium))
             .foregroundStyle(diff > 0 ? Color.red : (diff < 0 ? Color.blue : Color.secondary))
