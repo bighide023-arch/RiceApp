@@ -25,6 +25,8 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+from forecast import make_forecast
+
 POS_PDF_URL = "https://www.maff.go.jp/j/nousan/kokumotu/ksppos.pdf"
 AITAI_PAGE_URL = "https://www.maff.go.jp/j/seisan/keikaku/soukatu/aitaikakaku.html"
 
@@ -315,6 +317,10 @@ def main() -> int:
     except (ParseError, OSError, subprocess.CalledProcessError) as e:
         # 相対取引価格が読めなくても、店頭価格の更新は止めない
         print(f"warning: 相対取引価格をスキップ: {e}", file=sys.stderr)
+
+    forecast = make_forecast(data["retail_weekly"]["weeks"])
+    if forecast:
+        data["forecast"] = forecast
 
     # 毎日実行しても中身が同じならコミットが出ないよう、数字が変わったときだけ更新日時を進める
     content = {k: v for k, v in data.items() if k != "updated_at"}

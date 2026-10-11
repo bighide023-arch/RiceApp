@@ -4,6 +4,7 @@ import Foundation
 struct PriceData: Codable {
     let retailWeekly: RetailWeekly
     let wholesaleMonthly: WholesaleMonthly?
+    let forecast: Forecast?
     let updatedAt: String
 
     /// 数字が最後に変わった日時。読めなければ nil
@@ -64,6 +65,45 @@ struct BrandPrice: Codable, Identifiable, Hashable {
     }
 
     var latest: MonthPrice? { sortedPrices.last }
+}
+
+/// 店頭価格の今後の見通し（scripts/forecast.py が計算）
+struct Forecast: Codable {
+    let method: String
+    let basedOn: String
+    /// up / down / flat
+    let direction: String
+    let weeks: [ForecastWeek]
+    let backtest: Backtest?
+
+    struct Backtest: Codable {
+        let weeksAhead: Int
+        /// この予想方法の、過去の平均的な外れ幅（円）
+        let modelMae: Int
+        /// 「今の値段のまま」と考えた場合の平均的な外れ幅（円）
+        let naiveMae: Int
+        let samples: Int
+    }
+
+    var directionLabel: String {
+        switch direction {
+        case "up": "上がり傾向"
+        case "down": "下がり傾向"
+        default: "横ばい"
+        }
+    }
+}
+
+struct ForecastWeek: Codable, Identifiable, Hashable {
+    let weekStart: String
+    let weekEnd: String
+    let mid: Int
+    let low: Int
+    let high: Int
+
+    var id: String { weekStart }
+    var startDate: Date { DateParser.day(weekStart) }
+    var endDate: Date { DateParser.day(weekEnd) }
 }
 
 enum DateParser {
