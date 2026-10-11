@@ -281,6 +281,7 @@ def main() -> int:
 
     out_path = Path(args.out)
     data = json.loads(out_path.read_text()) if out_path.exists() else {}
+    previous = {k: v for k, v in data.items() if k != "updated_at"}
 
     pdf = Path(args.pos_pdf).read_bytes() if args.pos_pdf else http_get(POS_PDF_URL)
     text = pdf_to_text(pdf)
@@ -315,7 +316,10 @@ def main() -> int:
         # 相対取引価格が読めなくても、店頭価格の更新は止めない
         print(f"warning: 相対取引価格をスキップ: {e}", file=sys.stderr)
 
-    data["updated_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    # 毎日実行しても中身が同じならコミットが出ないよう、数字が変わったときだけ更新日時を進める
+    content = {k: v for k, v in data.items() if k != "updated_at"}
+    if content != previous or "updated_at" not in data:
+        data["updated_at"] = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
 

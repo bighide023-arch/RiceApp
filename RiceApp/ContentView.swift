@@ -16,6 +16,12 @@ struct ContentView: View {
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        if let updated = data.updatedDate {
+                            Text("最終更新：\(updated.formatted(.dateTime.month(.defaultDigits).day().hour().minute()))・毎日18時ごろに確認")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                         RetailSummaryCard(retail: data.retailWeekly)
                         RetailChartCard(weeks: data.retailWeekly.weeks)
                         if let wholesale = data.wholesaleMonthly {

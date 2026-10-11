@@ -9,7 +9,7 @@ struct AboutView: View {
             List {
                 if let data = store.data {
                     Section("スーパーの平均価格") {
-                        Text("全国約1,000店のスーパーのPOSデータによる、5kg袋の週ごとの平均販売価格（税込）です。毎週金曜ごろに更新されます。")
+                        Text("全国約1,000店のスーパーのPOSデータによる、5kg袋の週ごとの平均販売価格（税込）です。国の公表は週1回（金曜ごろ）で、アプリは毎日確認して新しい数字が出たらその日のうちに反映します。")
                         SourceLink(source: data.retailWeekly.source, url: data.retailWeekly.sourceUrl)
                     }
                     if let wholesale = data.wholesaleMonthly {

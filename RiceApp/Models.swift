@@ -5,6 +5,9 @@ struct PriceData: Codable {
     let retailWeekly: RetailWeekly
     let wholesaleMonthly: WholesaleMonthly?
     let updatedAt: String
+
+    /// 数字が最後に変わった日時。読めなければ nil
+    var updatedDate: Date? { ISO8601DateFormatter().date(from: updatedAt) }
 }
 
 /// スーパーでの販売価格（KSP-POS、全国、週次）
