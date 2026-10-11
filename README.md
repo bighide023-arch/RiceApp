@@ -5,7 +5,7 @@
 ## データ取得
 
 `scripts/fetch_prices.py` が農林水産省の公表資料から価格を取り出し、`data/prices.json` を更新します。
-GitHub Actions（`.github/workflows/fetch-prices.yml`）で毎週金曜に自動実行します。
+GitHub Actions（`.github/workflows/fetch-prices.yml`）で毎日18時（JST）に自動実行します。数字が変わったときだけコミットされます。
 
 - 店頭価格: スーパーでの販売価格（KSP-POS、全国、週次、円/5kg）
 - 相対取引価格: 全銘柄平均と産地品種銘柄別（月次、円/玄米60kg）
