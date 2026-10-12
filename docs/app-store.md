@@ -36,4 +36,4 @@ JA などの出荷業者と卸売業者の間で決まった取引価格を、�
 ・プライバシーポリシーURL：https://github.com/bighide023-arch/RiceApp/blob/main/docs/privacy.md
 ・App のプライバシー：「データの収集なし」
 ・年齢制限：4+
-・サポートURL：https://github.com/bighide023-arch/RiceApp/issues
+・サポートURL：https://github.com/bighide023-arch/RiceApp/blob/main/docs/privacy.md（お問い合わせ先 bighide023@gmail.com を記載）

@@ -22,4 +22,4 @@
 
 ## お問い合わせ
 
-本ポリシーに関するお問い合わせは、https://github.com/bighide023-arch/RiceApp/issues からお寄せください。
+本ポリシーに関するお問い合わせは、bighide023@gmail.com までメールでお寄せください。
