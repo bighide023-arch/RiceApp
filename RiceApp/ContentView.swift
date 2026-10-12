@@ -314,65 +314,6 @@ struct MonthlyChart: View {
     }
 }
 
-struct BrandListView: View {
-    let wholesale: WholesaleMonthly
-    @State private var query = ""
-
-    private var filtered: [BrandPrice] {
-        guard !query.isEmpty else { return wholesale.brands }
-        return wholesale.brands.filter { $0.region.contains(query) || $0.variety.contains(query) }
-    }
-
-    var body: some View {
-        List(filtered) { brand in
-            NavigationLink {
-                BrandDetailView(brand: brand)
-            } label: {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(brand.variety)
-                        Text(brand.region).font(.caption).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    if let latest = brand.latest {
-                        VStack(alignment: .trailing) {
-                            Text("\(latest.price.formatted())円").monospacedDigit()
-                            Text(latest.date.yearMonth).font(.caption).foregroundStyle(.secondary)
-                        }
-                    } else {
-                        Text("取引なし").foregroundStyle(.secondary)
-                    }
-                }
-            }
-        }
-        .searchable(text: $query, prompt: "産地・銘柄で探す（例：コシヒカリ）")
-        .navigationTitle("銘柄別の取引価格")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-struct BrandDetailView: View {
-    let brand: BrandPrice
-
-    var body: some View {
-        List {
-            Section {
-                MonthlyChart(prices: brand.sortedPrices)
-                    .padding(.vertical, 8)
-            } footer: {
-                Text("単位：円/玄米60kg（税込）。取引量が少ない月は公表されません。")
-            }
-            Section("月ごとの価格") {
-                ForEach(brand.sortedPrices.reversed()) { p in
-                    LabeledContent(p.date.yearMonth, value: "\(p.price.formatted())円")
-                }
-            }
-        }
-        .navigationTitle("\(brand.region) \(brand.variety)")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
 // MARK: - 共通
 
 struct Card<Content: View>: View {
