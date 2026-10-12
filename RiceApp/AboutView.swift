@@ -30,6 +30,10 @@ struct AboutView: View {
                 }
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+                Section {
+                    Link("プライバシーポリシー", destination: URL(string: "https://github.com/bighide023-arch/RiceApp/blob/main/docs/privacy.md")!)
+                    Link("お問い合わせ", destination: URL(string: "https://github.com/bighide023-arch/RiceApp/issues")!)
+                }
             }
             .navigationTitle("データについて")
             .navigationBarTitleDisplayMode(.inline)
