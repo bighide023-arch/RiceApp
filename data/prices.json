@@ -3,7 +3,7 @@
     "unit": "円/5kg（税込）",
     "source": "農林水産省「スーパーでの販売数量・価格の推移（KSP-POSデータ全国、週次）」を加工して作成",
     "source_url": "https://www.maff.go.jp/j/nousan/kokumotu/ksppos.pdf",
-    "published": "2026-10-23",
+    "published": "2026-10-30",
     "weeks": [
       {
         "week_start": "2025-02-03",
@@ -627,10 +627,17 @@
         "brand": 2872,
         "blend": 2609,
         "average": 2821
+      },
+      {
+        "week_start": "2026-10-19",
+        "week_end": "2026-10-25",
+        "brand": 2811,
+        "blend": 2678,
+        "average": 2788
       }
     ]
   },
-  "updated_at": "2026-10-23T13:53:27+00:00",
+  "updated_at": "2026-10-30T15:24:10+00:00",
   "wholesale_monthly": {
     "unit": "円/玄米60kg（税込）",
     "source": "農林水産省「米の相対取引価格・数量」を加工して作成",
@@ -2291,71 +2298,71 @@
   },
   "forecast": {
     "method": "減衰トレンド付き指数平滑法（過去の店頭価格のみ）",
-    "based_on": "2026-10-12",
+    "based_on": "2026-10-19",
     "direction": "down",
     "weeks": [
       {
-        "week_start": "2026-10-19",
-        "week_end": "2026-10-25",
-        "mid": 2805,
-        "low": 2752,
-        "high": 2857
-      },
-      {
         "week_start": "2026-10-26",
         "week_end": "2026-11-01",
-        "mid": 2792,
-        "low": 2704,
-        "high": 2880
+        "mid": 2772,
+        "low": 2720,
+        "high": 2824
       },
       {
         "week_start": "2026-11-02",
         "week_end": "2026-11-08",
-        "mid": 2782,
-        "low": 2663,
-        "high": 2901
+        "mid": 2758,
+        "low": 2671,
+        "high": 2846
       },
       {
         "week_start": "2026-11-09",
         "week_end": "2026-11-15",
-        "mid": 2774,
-        "low": 2626,
-        "high": 2922
+        "mid": 2747,
+        "low": 2629,
+        "high": 2866
       },
       {
         "week_start": "2026-11-16",
         "week_end": "2026-11-22",
-        "mid": 2767,
-        "low": 2593,
-        "high": 2942
+        "mid": 2738,
+        "low": 2591,
+        "high": 2885
       },
       {
         "week_start": "2026-11-23",
         "week_end": "2026-11-29",
-        "mid": 2762,
-        "low": 2562,
-        "high": 2962
+        "mid": 2731,
+        "low": 2557,
+        "high": 2905
       },
       {
         "week_start": "2026-11-30",
         "week_end": "2026-12-06",
-        "mid": 2758,
-        "low": 2533,
-        "high": 2983
+        "mid": 2725,
+        "low": 2526,
+        "high": 2925
       },
       {
         "week_start": "2026-12-07",
         "week_end": "2026-12-13",
-        "mid": 2755,
-        "low": 2506,
-        "high": 3003
+        "mid": 2721,
+        "low": 2497,
+        "high": 2944
+      },
+      {
+        "week_start": "2026-12-14",
+        "week_end": "2026-12-20",
+        "mid": 2717,
+        "low": 2470,
+        "high": 2964
       }
     ],
     "backtest": {
       "weeks_ahead": 4,
       "model_mae": 102,
-      "naive_mae": 123,
-      "samples": 55
+      "naive_mae": 124,
+      "samples": 56
     }
   }
 }
